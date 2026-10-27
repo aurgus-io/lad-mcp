@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lad-mcp"
+version = "0.1.0"
+description = "Read-only MCP tools for searching a local LAD event store"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["mcp>=2,<3", "python-dotenv>=1,<2"]
+
+[project.scripts]
+lad-mcp = "lad_mcp.server:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
