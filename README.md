@@ -42,22 +42,41 @@ By default the server uses stdio, so a local MCP client launches it as a
 subprocess. See [client setup](docs/client-setup.md) for Claude Desktop setup
 and ChatGPT connection requirements. Do not commit local paths or credentials.
 
-### Ubuntu with Claude Code
+### Quick setup by operating system
 
-For an Ubuntu machine running LAD, install and sign in to
-[Claude Code](https://docs.anthropic.com/en/docs/claude-code/getting-started),
-then run the setup script below. It asks for the LAD directory, checks that the
-event file exists, installs `uv` if needed, and registers LAD MCP with Claude
-Code.
+First install and sign in to Claude, and start LAD so it has created
+`daemon/logs/dashboard_events.jsonl`. The setup scripts ask where LAD is
+installed, install `uv` if needed, then configure the chosen local Claude
+client. They preserve existing settings and back up Claude Desktop's config
+before changing it.
+
+**macOS** — choose Claude Desktop or Claude Code when prompted:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/aurgus-io/lad-mcp/main/scripts/setup-ubuntu.sh -o /tmp/setup-lad-mcp.sh
+curl -fsSL https://raw.githubusercontent.com/aurgus-io/lad-mcp/main/scripts/setup-unix.sh -o /tmp/setup-lad-mcp.sh
 bash /tmp/setup-lad-mcp.sh
 ```
 
-After setup, verify the connection with `claude mcp list`. Open Claude Code and
-run `/mcp` to confirm the LAD tools are available. See
-[client setup](docs/client-setup.md) for troubleshooting and other clients.
+**Windows 10+** — in PowerShell, choose Claude Desktop or Claude Code:
+
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/aurgus-io/lad-mcp/main/scripts/setup-windows.ps1 -OutFile "$env:TEMP\setup-lad-mcp.ps1"
+Unblock-File "$env:TEMP\setup-lad-mcp.ps1"
+& "$env:TEMP\setup-lad-mcp.ps1"
+```
+
+**Linux** — Ubuntu, Debian, Fedora, or compatible distributions use the Claude
+Code CLI with this Bash installer:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/aurgus-io/lad-mcp/main/scripts/setup-unix.sh -o /tmp/setup-lad-mcp.sh
+bash /tmp/setup-lad-mcp.sh
+```
+
+Claude Desktop is available for macOS and Windows; on Linux, use Claude Code.
+Claude Code's documented Linux requirements list Ubuntu 20.04+ and Debian 10+;
+the installer itself is distro-agnostic, while Fedora support depends on the
+Claude Code runtime. See [client setup](docs/client-setup.md) for details.
 
 For ChatGPT or another remote MCP client, the server needs to be reachable over
 HTTPS or through a supported secure tunnel. This prototype's HTTP transport has

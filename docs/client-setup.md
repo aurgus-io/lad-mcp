@@ -4,61 +4,63 @@ LAD MCP supplies event data to an AI client. The client uses the model selected
 in the user's Claude or ChatGPT account to analyze that data. No provider API
 key is needed by LAD MCP.
 
-## Ubuntu with Claude Code
+## macOS, Windows, and Linux setup
 
-On Ubuntu, use Claude Code as the local MCP client. Install it and sign in
-following [Anthropic's setup guide](https://docs.anthropic.com/en/docs/claude-code/getting-started).
-Make sure LAD is running and has created
-`daemon/logs/dashboard_events.jsonl`, then run:
+Install and sign in to a compatible Claude client, then run LAD until it has
+created `daemon/logs/dashboard_events.jsonl`. The setup script asks for the LAD
+directory, installs `uv` if needed, and configures the MCP connection. It
+doesn’t require cloning this repository or entering an OpenAI/Anthropic API key.
+
+### macOS
+
+Use Claude Desktop or Claude Code. The script asks which client to configure:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/aurgus-io/lad-mcp/main/scripts/setup-ubuntu.sh -o /tmp/setup-lad-mcp.sh
+curl -fsSL https://raw.githubusercontent.com/aurgus-io/lad-mcp/main/scripts/setup-unix.sh -o /tmp/setup-lad-mcp.sh
 bash /tmp/setup-lad-mcp.sh
 ```
 
-The script asks where LAD is installed, installs `uv` if needed, and registers
-the LAD MCP server with Claude Code. Check it with `claude mcp list`; inside
-Claude Code, run `/mcp` to confirm the tools loaded. You do not need to clone
-the `lad-mcp` repository or configure provider API keys.
+For Claude Desktop, it merges the LAD entry into the per-user config and keeps
+a `.bak` copy of the previous file. Fully quit and reopen Claude Desktop after
+setup. For Claude Code, check `claude mcp list`, then use `/mcp` in a session.
 
-## Claude Desktop on the same machine as LAD
+### Windows 10 or newer
 
-1. Install Python 3.11+ and [`uv`](https://docs.astral.sh/uv/).
-2. Clone this repository and install its dependencies:
+In PowerShell, choose Claude Desktop or Claude Code when prompted:
 
-   ```bash
-   cd /path/to/lad-mcp
-   uv sync
-   ```
+```powershell
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/aurgus-io/lad-mcp/main/scripts/setup-windows.ps1 -OutFile "$env:TEMP\setup-lad-mcp.ps1"
+Unblock-File "$env:TEMP\setup-lad-mcp.ps1"
+& "$env:TEMP\setup-lad-mcp.ps1"
+```
 
-3. Open Claude Desktop's MCP configuration file:
+Claude Code on Windows requires its supported environment (WSL or Git for
+Windows). If LAD runs inside WSL, run the setup from that same WSL environment
+or make the event file accessible to the Windows client.
 
-   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+### Linux
 
-4. Add the server entry below, replacing both example paths with absolute paths
-   on your machine. Merge it into an existing `mcpServers` object if you have
-   other MCP servers configured.
+Use Claude Code. The Bash installer is distro-agnostic and supports Ubuntu,
+Debian, Fedora, and compatible distributions:
 
-   ```json
-   {
-     "mcpServers": {
-       "lad": {
-         "command": "uv",
-         "args": ["--directory", "/absolute/path/to/lad-mcp", "run", "lad-mcp"],
-         "env": {
-           "LAD_EVENTS_FILE": "/absolute/path/to/LAD/daemon/logs/dashboard_events.jsonl"
-         }
-       }
-     }
-   }
-   ```
+```bash
+curl -fsSL https://raw.githubusercontent.com/aurgus-io/lad-mcp/main/scripts/setup-unix.sh -o /tmp/setup-lad-mcp.sh
+bash /tmp/setup-lad-mcp.sh
+```
 
-5. Restart Claude Desktop. Ask it to list recent anomalies or investigate an
-   event. It can use `search_log_events`, `get_log_event`, and `list_anomalies`.
+Anthropic's currently documented Claude Code Linux requirements list Ubuntu
+20.04+ and Debian 10+. Fedora is not listed as an officially supported distro,
+though the installer itself doesn’t use distro-specific package commands.
+Claude Desktop does not currently offer an official Linux app, so use Claude
+Code there.
 
-The `uv` executable must be available to Claude Desktop. If it is not on the
-application's PATH, use the absolute path to `uv` as `command`.
+## Verify and troubleshoot
+
+For Claude Code, run `claude mcp list`; inside Claude Code, run `/mcp`. For
+Claude Desktop, fully quit and reopen the app. Ask the model to list anomalies
+from the last 24 hours. If it reports no data, ask it to search all retained
+events with `since_minutes=0`, then confirm LAD is writing to the path you gave
+the setup script.
 
 ## ChatGPT
 
