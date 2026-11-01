@@ -76,7 +76,10 @@ bash /tmp/setup-lad-mcp.sh
 Claude Desktop is available for macOS and Windows; on Linux, use Claude Code.
 Claude Code's documented Linux requirements list Ubuntu 20.04+ and Debian 10+;
 the installer itself is distro-agnostic, while Fedora support depends on the
-Claude Code runtime. See [client setup](docs/client-setup.md) for details.
+Claude Code runtime. These installers configure local Claude clients. ChatGPT
+web works from any OS, but it needs authenticated remote MCP hosting; this
+prototype does not provide that yet. See [client setup](docs/client-setup.md)
+for the client and OS matrix.
 
 For ChatGPT or another remote MCP client, the server needs to be reachable over
 HTTPS or through a supported secure tunnel. This prototype's HTTP transport has

@@ -4,6 +4,13 @@ LAD MCP supplies event data to an AI client. The client uses the model selected
 in the user's Claude or ChatGPT account to analyze that data. No provider API
 key is needed by LAD MCP.
 
+| User's machine | Local Claude client | Setup |
+| --- | --- | --- |
+| macOS | Claude Desktop or Claude Code | `setup-unix.sh` |
+| Windows 10+ | Claude Desktop or Claude Code | `setup-windows.ps1` |
+| Linux | Claude Code | `setup-unix.sh` |
+| Any OS with a browser | ChatGPT web | Requires a remotely reachable, authenticated MCP server; see below |
+
 ## macOS, Windows, and Linux setup
 
 Install and sign in to a compatible Claude client, then run LAD until it has
@@ -64,17 +71,25 @@ the setup script.
 
 ## ChatGPT
 
-ChatGPT connects to a remote MCP endpoint, not a server running only on your
-computer. Custom MCP server availability and setup depend on the ChatGPT plan
-and workspace settings. A connection needs an HTTPS endpoint or a supported
-secure tunnel.
+ChatGPT web works from any operating system, but it cannot launch a local stdio
+server. It needs a remotely reachable MCP endpoint over HTTPS, or a supported
+Secure MCP Tunnel. Custom MCP availability depends on the ChatGPT plan and
+workspace permissions; OpenAI's current setup guide lists Business and
+Enterprise/Edu for full custom MCP connections on ChatGPT web.
 
-LAD MCP can run Streamable HTTP by setting `LAD_MCP_TRANSPORT=streamable-http`,
-but its current HTTP server has no authentication or per-user authorization.
-It binds to loopback by default. Do not expose it publicly or connect it to
-production logs until authenticated access and per-user data isolation are
-implemented. Once the server is deployed safely, add its endpoint in ChatGPT's
-custom MCP server settings and select the tools to enable.
+After LAD MCP has authenticated remote hosting, the user connects it in
+ChatGPT's Apps/Plugins settings: add a custom MCP server, provide its HTTPS
+endpoint or select a Secure MCP Tunnel, configure the server's authentication,
+then test the discovered read-only tools. See [OpenAI's setup guide](https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt)
+for current account and workspace steps.
+
+**This server is not ready for that ChatGPT connection yet.** Its HTTP transport
+has no authentication or per-user authorization and binds to loopback by
+default. A tunnel protects network exposure but does not replace service
+authentication. Do not expose the server or connect production logs until
+authenticated access and per-user data isolation are implemented. These
+cross-platform installers configure local Claude clients only; they do not
+create or publish a ChatGPT connector.
 
 ## Data handling
 
