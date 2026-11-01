@@ -42,6 +42,23 @@ By default the server uses stdio, so a local MCP client launches it as a
 subprocess. See [client setup](docs/client-setup.md) for Claude Desktop setup
 and ChatGPT connection requirements. Do not commit local paths or credentials.
 
+### Ubuntu with Claude Code
+
+For an Ubuntu machine running LAD, install and sign in to
+[Claude Code](https://docs.anthropic.com/en/docs/claude-code/getting-started),
+then run the setup script below. It asks for the LAD directory, checks that the
+event file exists, installs `uv` if needed, and registers LAD MCP with Claude
+Code.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/aurgus-io/lad-mcp/main/scripts/setup-ubuntu.sh -o /tmp/setup-lad-mcp.sh
+bash /tmp/setup-lad-mcp.sh
+```
+
+After setup, verify the connection with `claude mcp list`. Open Claude Code and
+run `/mcp` to confirm the LAD tools are available. See
+[client setup](docs/client-setup.md) for troubleshooting and other clients.
+
 For ChatGPT or another remote MCP client, the server needs to be reachable over
 HTTPS or through a supported secure tunnel. This prototype's HTTP transport has
 no authentication or per-user authorization. **Do not expose it to a network

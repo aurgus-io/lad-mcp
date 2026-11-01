@@ -4,6 +4,23 @@ LAD MCP supplies event data to an AI client. The client uses the model selected
 in the user's Claude or ChatGPT account to analyze that data. No provider API
 key is needed by LAD MCP.
 
+## Ubuntu with Claude Code
+
+On Ubuntu, use Claude Code as the local MCP client. Install it and sign in
+following [Anthropic's setup guide](https://docs.anthropic.com/en/docs/claude-code/getting-started).
+Make sure LAD is running and has created
+`daemon/logs/dashboard_events.jsonl`, then run:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/aurgus-io/lad-mcp/main/scripts/setup-ubuntu.sh -o /tmp/setup-lad-mcp.sh
+bash /tmp/setup-lad-mcp.sh
+```
+
+The script asks where LAD is installed, installs `uv` if needed, and registers
+the LAD MCP server with Claude Code. Check it with `claude mcp list`; inside
+Claude Code, run `/mcp` to confirm the tools loaded. You do not need to clone
+the `lad-mcp` repository or configure provider API keys.
+
 ## Claude Desktop on the same machine as LAD
 
 1. Install Python 3.11+ and [`uv`](https://docs.astral.sh/uv/).
