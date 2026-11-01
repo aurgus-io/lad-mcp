@@ -2,6 +2,10 @@
 
 A read-only Model Context Protocol (MCP) server that gives compatible AI clients
 bounded access to events produced by [LAD](https://github.com/CrAnish07/LAD).
+Connect it to Claude or ChatGPT and ask that client's selected model to
+investigate the events. LAD MCP does not call a model or require users to give it
+an OpenAI or Anthropic API key: the connected AI client handles analysis using
+the user's account and model.
 
 The server exposes three tools:
 
@@ -10,10 +14,9 @@ The server exposes three tools:
 - `get_log_event` retrieves the latest analysis for one event ID.
 - `list_anomalies` lists events LAD has marked anomalous.
 
-The server itself does not call OpenAI, Anthropic, or another model. It returns
-selected event content to the connected MCP host; that host may send the content
-to its configured model. Review the AI host's data-handling settings before
-connecting production logs.
+The server returns selected event content to the connected MCP host; that host
+may send it to its configured model. Review the AI host's data-handling settings
+before connecting production logs.
 
 ## Data source
 
@@ -24,7 +27,7 @@ For another installation, set `LAD_EVENTS_FILE` to the event file's path. Search
 is keyword based in this version; it does not query LAD's Qdrant vector store or
 embedding model.
 
-## Run locally
+## Install and run locally
 
 Requires Python 3.11 or newer.
 
@@ -36,20 +39,20 @@ uv run lad-mcp
 ```
 
 By default the server uses stdio, so a local MCP client launches it as a
-subprocess. An MCP client configuration can run
-`uv --directory /path/to/lad-mcp run lad-mcp` and set `LAD_EVENTS_FILE` to the
-LAD event file. Do not commit local paths or credentials.
+subprocess. See [client setup](docs/client-setup.md) for Claude Desktop setup
+and ChatGPT connection requirements. Do not commit local paths or credentials.
 
-For ChatGPT or another HTTP-based MCP client, set
-`LAD_MCP_TRANSPORT=streamable-http`. It listens on `127.0.0.1:8787` by default.
-A private/on-prem instance needs a secure tunnel or an authenticated HTTPS
-service. **Do not expose this prototype directly to a network:** it does not yet
-provide authentication or per-user authorization.
+For ChatGPT or another remote MCP client, the server needs to be reachable over
+HTTPS or through a supported secure tunnel. This prototype's HTTP transport has
+no authentication or per-user authorization. **Do not expose it to a network
+or connect production logs until authenticated access and data isolation are
+implemented.**
 
 ## Current limits
 
 - Supports stdio and optional loopback Streamable HTTP. No MCP authentication
-  or per-user authorization is implemented.
+  or per-user authorization is implemented; remote multi-user hosting is not
+  ready.
 - Reads the current JSONL event store directly. A stable LAD search API or
   database adapter would be preferable for larger deployments.
 - Results are capped at 100, but the adapter reads the full event file to
