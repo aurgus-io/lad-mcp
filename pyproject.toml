@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Read-only MCP tools for searching a local LAD event store"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["mcp>=2,<3", "python-dotenv>=1,<2"]
+dependencies = ["mcp>=2,<3", "python-dotenv>=1,<2", "uvicorn>=0.30,<1"]
 
 [project.scripts]
 lad-mcp = "lad_mcp.server:main"

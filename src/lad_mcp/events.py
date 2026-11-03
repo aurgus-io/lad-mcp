@@ -12,18 +12,18 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_EVENTS_FILE = REPO_ROOT.parent / "LAD" / "daemon" / "logs" / "dashboard_events.jsonl"
 
 
-def events_file() -> Path:
+def events_file(configured: str | Path | None = None) -> Path:
     """Resolve the configured LAD event file, using the sibling repo in development."""
-    configured = os.getenv("LAD_EVENTS_FILE")
+    configured = configured or os.getenv("LAD_EVENTS_FILE")
     path = Path(configured).expanduser() if configured else DEFAULT_EVENTS_FILE
     if not path.is_absolute():
         path = REPO_ROOT / path
     return path.resolve()
 
 
-def read_current_events() -> list[dict[str, Any]]:
+def read_current_events(path_override: str | Path | None = None) -> list[dict[str, Any]]:
     """Collapse append-only updates so each event has its latest known state."""
-    path = events_file()
+    path = events_file(path_override)
     if not path.is_file():
         raise FileNotFoundError(
             f"LAD event file not found at {path}. Set LAD_EVENTS_FILE to the active "

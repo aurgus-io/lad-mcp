@@ -14,8 +14,10 @@ from typing import Any
 
 from dotenv import load_dotenv
 from mcp.server import MCPServer
+import uvicorn
 
 from lad_mcp.events import public_event, read_current_events
+from lad_mcp.remote_auth import BearerAuthMiddleware, current_events_file, load_user_credentials
 
 
 load_dotenv()
@@ -63,7 +65,7 @@ def _matches_time(event: dict[str, Any], since_minutes: int) -> bool:
 
 def _safe_read() -> list[dict[str, Any]]:
     try:
-        return read_current_events()
+        return read_current_events(current_events_file.get())
     except (OSError, UnicodeError) as exc:
         raise RuntimeError(str(exc)) from exc
 
@@ -154,7 +156,9 @@ def main() -> None:
     if transport == "streamable-http":
         host = os.getenv("LAD_MCP_HOST", "127.0.0.1")
         port = int(os.getenv("LAD_MCP_PORT", "8787"))
-        mcp.run(transport="streamable-http", host=host, port=port)
+        users = load_user_credentials()
+        app = BearerAuthMiddleware(mcp.streamable_http_app(host=host), users)
+        uvicorn.run(app, host=host, port=port, log_level="info")
         return
     raise ValueError("LAD_MCP_TRANSPORT must be 'stdio' or 'streamable-http'")
 

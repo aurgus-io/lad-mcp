@@ -72,24 +72,18 @@ the setup script.
 ## ChatGPT
 
 ChatGPT web works from any operating system, but it cannot launch a local stdio
-server. It needs a remotely reachable MCP endpoint over HTTPS, or a supported
-Secure MCP Tunnel. Custom MCP availability depends on the ChatGPT plan and
-workspace permissions; OpenAI's current setup guide lists Business and
-Enterprise/Edu for full custom MCP connections on ChatGPT web.
+server. It needs a remotely reachable MCP endpoint over HTTPS. Custom MCP
+availability depends on the ChatGPT plan and workspace permissions; OpenAI's
+current setup guide lists Business and Enterprise/Edu for full custom MCP
+connections on ChatGPT web.
 
-After LAD MCP has authenticated remote hosting, the user connects it in
-ChatGPT's Apps/Plugins settings: add a custom MCP server, provide its HTTPS
-endpoint or select a Secure MCP Tunnel, configure the server's authentication,
-then test the discovered read-only tools. See [OpenAI's setup guide](https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt)
-for current account and workspace steps.
-
-**This server is not ready for that ChatGPT connection yet.** Its HTTP transport
-has no authentication or per-user authorization and binds to loopback by
-default. A tunnel protects network exposure but does not replace service
-authentication. Do not expose the server or connect production logs until
-authenticated access and per-user data isolation are implemented. These
+The HTTP transport now requires a per-user bearer token and maps each token to
+an event file. Follow the [remote connector guide](remote-connector.md) to
+configure it. The chosen client must support static bearer-token
+authentication; this project does not provide OAuth login. Use HTTPS and
+confirm the client's authentication options before connecting. These
 cross-platform installers configure local Claude clients only; they do not
-create or publish a ChatGPT connector.
+create or publish a remote connector.
 
 ## Data handling
 

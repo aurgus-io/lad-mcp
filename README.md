@@ -77,21 +77,21 @@ Claude Desktop is available for macOS and Windows; on Linux, use Claude Code.
 Claude Code's documented Linux requirements list Ubuntu 20.04+ and Debian 10+;
 the installer itself is distro-agnostic, while Fedora support depends on the
 Claude Code runtime. These installers configure local Claude clients. ChatGPT
-web works from any OS, but it needs authenticated remote MCP hosting; this
-prototype does not provide that yet. See [client setup](docs/client-setup.md)
+web works from any OS, but needs a remotely reachable HTTPS server and a client
+that supports bearer-token authentication. See [client setup](docs/client-setup.md)
 for the client and OS matrix.
 
-For ChatGPT or another remote MCP client, the server needs to be reachable over
-HTTPS or through a supported secure tunnel. This prototype's HTTP transport has
-no authentication or per-user authorization. **Do not expose it to a network
-or connect production logs until authenticated access and data isolation are
-implemented.**
+For a URL-based custom connector, run the Streamable HTTP transport and publish
+it through HTTPS. See the [remote
+connector guide](docs/remote-connector.md) for the server URL and setup steps.
+HTTP mode requires configured per-user bearer tokens and maps each token to its
+own event file. Use HTTPS so tokens are protected in transit. See the guide for
+configuration and client compatibility details.
 
 ## Current limits
 
-- Supports stdio and optional loopback Streamable HTTP. No MCP authentication
-  or per-user authorization is implemented; remote multi-user hosting is not
-  ready.
+- Supports stdio and bearer-authenticated Streamable HTTP with per-user event
+  file mappings. OAuth login and account management are not implemented.
 - Reads the current JSONL event store directly. A stable LAD search API or
   database adapter would be preferable for larger deployments.
 - Results are capped at 100, but the adapter reads the full event file to
